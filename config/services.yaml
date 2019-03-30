@@ -4,7 +4,11 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-
+    ldap_base_dn: '%env(resolve:LDAP_BASE_DN)%'
+    ldap_search_dn: '%env(resolve:LDAP_SEARCH_DN)%'
+    ldap_search_password: '%env(resolve:LDAP_SEARCH_PASSWORD)%'
+    ldap_dn_string: '%env(resolve:LDAP_DN_STRING)%'
+    jwt_secret_key: '%env(resolve:APP_SECRET)%'
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -27,11 +31,12 @@ services:
     # please note that last definitions always *replace* previous ones
     Symfony\Component\Ldap\Ldap:
         arguments: ['@Symfony\Component\Ldap\Adapter\ExtLdap\Adapter']
+
     Symfony\Component\Ldap\Adapter\ExtLdap\Adapter:
         arguments:
-            -   host: ldap.forumsys.com
-                port: 389
-                encryption: tls
+            -   host: '%env(resolve:LDAP_HOST)%'
+                port: '%env(resolve:LDAP_PORT)%'
+#                encryption: tls
                 options:
                     protocol_version: 3
                     referrals: false

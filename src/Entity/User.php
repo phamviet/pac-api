@@ -47,7 +47,7 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @ORM\Column(type="string", unique=true)
+     * @ORM\Column(type="string", unique=true, nullable=true)
      * @Assert\Email()
      */
     private $email;
@@ -55,7 +55,7 @@ class User implements UserInterface, \Serializable
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $password;
 
@@ -88,6 +88,21 @@ class User implements UserInterface, \Serializable
     private $accessControl;
 
     /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $loggedAt;
+
+    /**
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $lastLoggedAt;
+
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
+    /**
      * User constructor.
      */
     public function __construct()
@@ -97,7 +112,7 @@ class User implements UserInterface, \Serializable
 
     public function getId(): ?string
     {
-        return $this->id;
+        return (string) $this->id;
     }
 
     /**
@@ -287,6 +302,56 @@ class User implements UserInterface, \Serializable
         if ($newUser !== $accessControl->getUser()) {
             $accessControl->setUser($newUser);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getLoggedAt()
+    {
+        return $this->loggedAt;
+    }
+
+    /**
+     * @param \DateTimeInterface $loggedAt
+     * @return User
+     */
+    public function setLoggedAt(\DateTimeInterface $loggedAt): self
+    {
+        $this->loggedAt = $loggedAt;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTimeInterface
+     */
+    public function getLastLoggedAt()
+    {
+        return $this->lastLoggedAt;
+    }
+
+    /**
+     * @param \DateTimeInterface $lastLoggedAt
+     * @return User
+     */
+    public function setLastLoggedAt(\DateTimeInterface $lastLoggedAt): self
+    {
+        $this->lastLoggedAt = $lastLoggedAt;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

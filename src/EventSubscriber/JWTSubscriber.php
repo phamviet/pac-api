@@ -2,6 +2,8 @@
 
 namespace App\EventSubscriber;
 
+use App\Entity\User;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Lexik\Bundle\JWTAuthenticationBundle\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Event\JWTCreatedEvent;
@@ -15,13 +17,17 @@ class JWTSubscriber implements EventSubscriberInterface
      */
     private $requestStack;
 
+    private $registry;
+
     /**
      * JWTSubscriber constructor.
      * @param RequestStack $requestStack
+     * @param ManagerRegistry $registry
      */
-    public function __construct(RequestStack $requestStack)
+    public function __construct(RequestStack $requestStack, ManagerRegistry $registry)
     {
         $this->requestStack = $requestStack;
+        $this->registry = $registry;
     }
 
     public static function getSubscribedEvents(): array
@@ -39,11 +45,25 @@ class JWTSubscriber implements EventSubscriberInterface
     public function onJWTCreated(JWTCreatedEvent $event): void
     {
         $request = $this->requestStack->getCurrentRequest() ?: Request::createFromGlobals();
-        $event->setData(
-            array_merge(
-                $event->getData(),
-                ['ip' => $request->getClientIp()]
-            )
-        );
+        $user = $event->getUser();
+
+        $manager = $this->registry->getManager();
+        $repository = $manager->getRepository(User::class);
+        $current = $repository->findOneBy(['username' => $user->getUsername()]);
+
+        $data = $event->getData();
+
+        if (isset($data['roles'])) {
+            unset($data['roles']);
+        }
+
+        if (isset($data['tokenId']) && empty($data['tokenId'])) {
+            // todo Generate long live token for access control
+            $data['ipAddress'] = $request->getClientIp();
+        } else {
+            $data['uid'] = $current->getId();
+        }
+
+        $event->setData($data);
     }
 }

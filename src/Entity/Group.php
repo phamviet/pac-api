@@ -46,6 +46,11 @@ class Group
      */
     private $accessControl;
 
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    private $createdAt;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -114,6 +119,18 @@ class Group
         if ($newTeam !== $accessControl->getTeam()) {
             $accessControl->setTeam($newTeam);
         }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): self
+    {
+        $this->createdAt = $createdAt;
 
         return $this;
     }

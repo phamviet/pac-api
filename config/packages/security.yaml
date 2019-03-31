@@ -8,7 +8,7 @@ security:
                 base_dn: '%ldap_base_dn%'
                 search_dn: '%ldap_search_dn%'
                 search_password: '%ldap_search_password%'
-                default_roles: ROLE_USER
+                default_roles: ROLE_LDAP
                 uid_key: uid
         all_users:
             chain:

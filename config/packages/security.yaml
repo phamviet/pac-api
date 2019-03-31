@@ -32,7 +32,7 @@ security:
                 success_handler: lexik_jwt_authentication.handler.authentication_success
                 failure_handler: lexik_jwt_authentication.handler.authentication_failure
         api:
-            pattern:   ^/api
+            pattern:   ^/apis
             stateless: true
             provider: all_users
             guard:
